@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Temos uma novidade muito especial para compartilhar!"
+  >
+
+  <meta name="robots" content="noindex, nofollow, noarchive">
+
+  <title>Revelação Virtual do Bebê 💌</title>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg-1: #faf6ef;
+      --bg-2: #eee3d5;
+
+      --text: #504840;
+      --muted: #7c7067;
+
+      --card: rgba(255, 255, 255, 0.65);
+      --border: rgba(80, 72, 64, 0.12);
+
+      --boy: #8eb8d8;
+      --boy-light: #eef7fc;
+
+      --girl: #df91a8;
+      --girl-light: #fff1f5;
+      --girl-dark: #b75e78;
+
+      --button: #675a50;
+      --button-hover: #50453d;
+
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100dvh;
+
+      font-family: Arial, Helvetica, sans-serif;
+
+      color: var(--text);
+
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(255,255,255,.9),
+          transparent 42%
+        ),
+        linear-gradient(
+          160deg,
+          var(--bg-1),
+          var(--bg-2)
+        );
+
+      transition:
+        background 1s ease,
+        color 1s ease;
+    }
+
+    body.revealed {
+      background:
+        radial-gradient(
+          circle at top,
+          white,
+          transparent 42%
+        ),
+        linear-gradient(
+          160deg,
+          #fff8fa,
+          #f7dce4
+        );
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    main {
+      min-height: 100dvh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 28px 18px;
+    }
+
+    .screen {
+      display: none;
+
+      width: min(100%, 600px);
+
+      text-align: center;
+
+      animation: screenIn 500ms ease both;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+
+      font-size: .76rem;
+      font-weight: 700;
+
+      letter-spacing: .18em;
+      text-transform: uppercase;
+
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0 auto 18px;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      font-size: clamp(2rem, 7vw, 3.6rem);
+      font-weight: 400;
+
+      line-height: 1.08;
+    }
+
+    .description {
+      max-width: 470px;
+
+      margin: 0 auto 30px;
+
+      color: var(--muted);
+
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    .card {
+      width: min(100%, 470px);
+
+      margin: 0 auto;
+
+      padding: 28px;
+
+      border: 1px solid var(--border);
+      border-radius: 20px;
+
+      background: var(--card);
+
+      backdrop-filter: blur(8px);
+
+      box-shadow:
+        0 18px 50px rgba(72, 58, 44, .08);
+    }
+
+    .primary-button {
+      border: none;
+      border-radius: 999px;
+
+      padding: 14px 28px;
+
+      background: var(--button);
+      color: white;
+
+      font-weight: 600;
+
+      transition:
+        transform 180ms ease,
+        background 180ms ease,
+        opacity 180ms ease;
+    }
+
+    .primary-button:hover {
+      background: var(--button-hover);
+      transform: translateY(-1px);
+    }
+
+    .primary-button:disabled {
+      opacity: .55;
+      cursor: wait;
+
+      transform: none;
+    }
+
+    /* =====================================================
+       NOME
+       ===================================================== */
+
+    .name-input {
+      display: block;
+
+      width: 100%;
+
+      margin: 8px 0 18px;
+
+      padding: 15px 18px;
+
+      border: 1px solid rgba(80,72,64,.22);
+      border-radius: 12px;
+
+      background: white;
+      color: var(--text);
+
+      outline: none;
+
+      text-align: center;
+
+      font-size: 1.05rem;
+
+      transition:
+        border 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .name-input:focus {
+      border-color: #b69e8e;
+
+      box-shadow:
+        0 0 0 4px rgba(182,158,142,.13);
+    }
+
+    .error-message {
+      min-height: 20px;
+
+      margin: -8px 0 14px;
+
+      color: #a74f4f;
+
+      font-size: .88rem;
+    }
+
+    /* =====================================================
+       PALPITE
+       ===================================================== */
+
+    .guess-options {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 16px;
+    }
+
+    .guess-button {
+      min-height: 155px;
+
+      border: 1px solid transparent;
+      border-radius: 20px;
+
+      padding: 20px 14px;
+
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        border-color 180ms ease;
+    }
+
+    .guess-button:hover {
+      transform: translateY(-3px);
+
+      box-shadow:
+        0 16px 30px rgba(40,40,40,.09);
+    }
+
+    .guess-button:disabled {
+      opacity: .55;
+      cursor: wait;
+      transform: none;
+    }
+
+    .guess-button.boy {
+      background: var(--boy-light);
+      color: #4f7995;
+    }
+
+    .guess-button.girl {
+      background: var(--girl-light);
+      color: var(--girl-dark);
+    }
+
+    .guess-icon {
+      display: block;
+
+      margin-bottom: 8px;
+
+      font-size: 2.5rem;
+    }
+
+    .guess-label {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .loading-text {
+      display: none;
+
+      margin-top: 18px;
+
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .loading-text.visible {
+      display: block;
+    }
+
+    /* =====================================================
+       PALPITE REGISTRADO
+       ===================================================== */
+
+    .guess-result {
+      margin: 18px auto 28px;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      font-size: 1.5rem;
+
+      line-height: 1.5;
+    }
+
+    .database-warning {
+      display: none;
+
+      width: min(100%, 430px);
+
+      margin: 20px auto;
+
+      padding: 12px 16px;
+
+      border-radius: 12px;
+
+      background: rgba(255,255,255,.55);
+
+      color: var(--muted);
+
+      font-size: .82rem;
+      line-height: 1.5;
+    }
+
+    .database-warning.visible {
+      display: block;
+    }
+
+    /* =====================================================
+       ENVELOPE
+       ===================================================== */
+
+    .envelope-button {
+      position: relative;
+
+      display: block;
+
+      width: 250px;
+      height: 180px;
+
+      margin: 15px auto 0;
+
+      padding: 0;
+
+      border: 0;
+
+      background: transparent;
+
+      cursor: pointer;
+
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .envelope {
+      position: absolute;
+
+      bottom: 0;
+      left: 0;
+
+      width: 100%;
+      height: 145px;
+
+      border-radius: 5px;
+
+      background: #fffaf3;
+
+      box-shadow:
+        0 18px 50px rgba(76,61,47,.16);
+    }
+
+    .envelope::before,
+    .envelope::after {
+      content: "";
+
+      position: absolute;
+
+      bottom: 0;
+
+      width: 0;
+      height: 0;
+
+      z-index: 2;
+    }
+
+    .envelope::before {
+      left: 0;
+
+      border-left: 125px solid #f4eadc;
+      border-top: 72px solid transparent;
+      border-bottom: 72px solid #f4eadc;
+    }
+
+    .envelope::after {
+      right: 0;
+
+      border-right: 125px solid #eee0cf;
+      border-top: 72px solid transparent;
+      border-bottom: 72px solid #eee0cf;
+    }
+
+    .flap {
+      position: absolute;
+
+      top: 35px;
+      left: 0;
+
+      width: 0;
+      height: 0;
+
+      border-left: 125px solid transparent;
+      border-right: 125px solid transparent;
+      border-top: 82px solid #e6d5c1;
+
+      transform-origin: top center;
+
+      z-index: 4;
+
+      transition:
+        transform 800ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .letter {
+      position: absolute;
+
+      left: 50%;
+      bottom: 15px;
+
+      width: 205px;
+      height: 125px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      transform: translateX(-50%);
+
+      border-radius: 5px;
+
+      background: white;
+
+      box-shadow:
+        0 6px 20px rgba(0,0,0,.06);
+
+      z-index: 1;
+
+      transition:
+        transform 900ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .letter span {
+      opacity: 0;
+
+      color: var(--girl-dark);
+
+      font-size: 2rem;
+
+      transition:
+        opacity 300ms ease 500ms;
+    }
+
+    .heart-seal {
+      position: absolute;
+
+      left: 50%;
+      top: 94px;
+
+      width: 48px;
+      height: 48px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      transform: translate(-50%, -50%);
+
+      border-radius: 50%;
+
+      background: #b77a72;
+      color: white;
+
+      font-size: 1.2rem;
+
+      z-index: 6;
+
+      box-shadow:
+        0 5px 15px rgba(80,45,40,.18);
+
+      transition:
+        opacity 250ms ease,
+        transform 400ms ease;
+    }
+
+    .envelope-button.open .flap {
+      transform: rotateX(180deg);
+
+      z-index: 0;
+    }
+
+    .envelope-button.open .letter {
+      transform:
+        translateX(-50%)
+        translateY(-90px);
+    }
+
+    .envelope-button.open .letter span {
+      opacity: 1;
+    }
+
+    .envelope-button.open .heart-seal {
+      opacity: 0;
+
+      transform:
+        translate(-50%,-50%)
+        scale(.5);
+    }
+
+    .tap-label {
+      margin-top: 28px;
+
+      color: var(--muted);
+
+      font-size: .9rem;
+
+      animation:
+        breathe 2s ease-in-out infinite;
+    }
+
+    /* =====================================================
+       REVELAÇÃO
+       ===================================================== */
+
+    .reveal-heart {
+      font-size: 2.2rem;
+
+      color: var(--girl-dark);
+
+      animation: heartPop 800ms ease both;
+    }
+
+    .reveal-title {
+      margin-top: 15px;
+
+      color: var(--girl-dark);
+
+      font-size:
+        clamp(3.2rem, 13vw, 6rem);
+
+      line-height: .98;
+    }
+
+    .reveal-subtitle {
+      margin: 0 auto;
+
+      color: #765760;
+
+      font-size:
+        clamp(1.1rem, 4vw, 1.35rem);
+
+      line-height: 1.6;
+    }
+
+    .divider {
+      width: 70px;
+      height: 1px;
+
+      margin: 30px auto;
+
+      background:
+        rgba(183,94,120,.35);
+    }
+
+    .personal-message {
+      max-width: 470px;
+
+      margin: 0 auto;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      font-size:
+        clamp(1.25rem, 4vw, 1.6rem);
+
+      line-height: 1.6;
+    }
+
+    /* =====================================================
+       ULTRASSOM
+       ===================================================== */
+
+    .ultrasound-wrapper {
+      width: min(88%, 380px);
+
+      margin: 38px auto 0;
+
+      padding:
+        10px
+        10px
+        34px;
+
+      border-radius: 4px;
+
+      background: white;
+
+      transform: rotate(-1.5deg);
+
+      box-shadow:
+        0 15px 40px rgba(100,60,70,.13);
+    }
+
+    .ultrasound-wrapper.hidden {
+      display: none;
+    }
+
+    .ultrasound-wrapper img {
+      display: block;
+
+      width: 100%;
+
+      border-radius: 2px;
+    }
+
+    .photo-caption {
+      margin-top: 14px;
+
+      color: #8e747b;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+    }
+
+    /* =====================================================
+       CONFETES
+       ===================================================== */
+
+    .confetti {
+      position: fixed;
+
+      top: -20px;
+
+      width: 9px;
+      height: 14px;
+
+      border-radius: 30%;
+
+      z-index: 999;
+
+      pointer-events: none;
+
+      animation:
+        fall linear forwards;
+    }
+
+    /* =====================================================
+       ANIMAÇÕES
+       ===================================================== */
+
+    @keyframes screenIn {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes breathe {
+      0%,
+      100% {
+        opacity: .55;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes heartPop {
+      0% {
+        transform: scale(0);
+      }
+
+      70% {
+        transform: scale(1.25);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fall {
+      from {
+        transform:
+          translateY(-20px)
+          rotate(0deg);
+
+        opacity: 1;
+      }
+
+      to {
+        transform:
+          translateY(110vh)
+          rotate(720deg);
+
+        opacity: .4;
+      }
+    }
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media (max-width: 460px) {
+      .card {
+        padding: 23px 18px;
+      }
+
+      .guess-options {
+        gap: 11px;
+      }
+
+      .guess-button {
+        min-height: 135px;
+
+        padding: 16px 10px;
+      }
+
+      .envelope-button {
+        width: 220px;
+      }
+
+      .envelope::before {
+        border-left-width: 110px;
+      }
+
+      .envelope::after {
+        border-right-width: 110px;
+      }
+
+      .flap {
+        border-left-width: 110px;
+        border-right-width: 110px;
+      }
+
+      .letter {
+        width: 180px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<main>
+
+  <!-- =====================================================
+       1. ABERTURA
+       ===================================================== -->
+
+  <section
+    id="screenIntro"
+    class="screen active"
+  >
+    <p class="eyebrow">
+      🥰 Revelação Virtual do Bebê 🥰
+    </p>
+
+    <h1>
+      Temos uma surpresa muito especial para você...
+    </h1>
+
+    <p class="description">
+      Mas antes de descobrir, queremos saber:
+      qual é o seu palpite?
+    </p>
+
+    <button
+      id="startButton"
+      class="primary-button"
+      type="button"
+    >
+      Quero descobrir
+    </button>
+  </section>
+
+
+  <!-- =====================================================
+       2. NOME
+       ===================================================== -->
+
+  <section
+    id="screenName"
+    class="screen"
+  >
+    <p class="eyebrow">
+      Antes de começar
+    </p>
+
+    <h1>
+      Nos diga seu nome:
+    </h1>
+
+    <p class="description">
+      Queremos guardar quem deu cada palpite. 💌
+    </p>
+
+    <div class="card">
+      <input
+        id="nameInput"
+        class="name-input"
+        type="text"
+        maxlength="80"
+        autocomplete="name"
+        placeholder="Seu nome"
+        aria-label="Seu nome"
+      >
+
+      <p
+        id="nameError"
+        class="error-message"
+      ></p>
+
+      <button
+        id="nameButton"
+        class="primary-button"
+        type="button"
+      >
+        Continuar
+      </button>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       3. PALPITE
+       ===================================================== -->
+
+  <section
+    id="screenGuess"
+    class="screen"
+  >
+    <p class="eyebrow">
+      Hora do palpite
+    </p>
+
+    <h1>
+      <span id="guessName"></span>,
+      o que você acha?
+    </h1>
+
+    <p class="description">
+      Quem será que está chegando?
+    </p>
+
+    <div class="guess-options">
+
+      <button
+        class="guess-button boy"
+        type="button"
+        data-guess="boy"
+      >
+        <span class="guess-icon">
+          👦🏻
+        </span>
+
+        <span class="guess-label">
+          Menino
+        </span>
+      </button>
+
+
+      <button
+        class="guess-button girl"
+        type="button"
+        data-guess="girl"
+      >
+        <span class="guess-icon">
+          👧🏻
+        </span>
+
+        <span class="guess-label">
+          Menina
+        </span>
+      </button>
+
+    </div>
+
+    <p
+      id="loadingText"
+      class="loading-text"
+    >
+      Registrando seu palpite...
+    </p>
+  </section>
+
+
+  <!-- =====================================================
+       4. PALPITE REGISTRADO
+       ===================================================== -->
+
+  <section
+    id="screenEnvelope"
+    class="screen"
+  >
+    <p class="eyebrow">
+      Palpite feito!
+    </p>
+
+    <h1>
+      Agora chegou a hora...
+    </h1>
+
+    <p
+      id="guessResult"
+      class="guess-result"
+    ></p>
+
+    <p
+      id="databaseWarning"
+      class="database-warning"
+    >
+      Não conseguimos salvar seu palpite desta vez,
+      mas é claro que não vamos deixar você sem descobrir
+      a surpresa.
+    </p>
+
+
+    <button
+      id="envelopeButton"
+      class="envelope-button"
+      type="button"
+      aria-label="Abrir o envelope"
+    >
+
+      <div class="letter">
+        <span>
+          ♥
+        </span>
+      </div>
+
+      <div class="envelope"></div>
+
+      <div class="flap"></div>
+
+      <div class="heart-seal">
+        ♥
+      </div>
+
+    </button>
+
+    <p class="tap-label">
+      Toque no envelope para descobrir
+    </p>
+  </section>
+
+
+  <!-- =====================================================
+       5. REVELAÇÃO
+       ===================================================== -->
+
+  <section
+    id="screenReveal"
+    class="screen"
+    aria-live="polite"
+  >
+
+    <div class="reveal-heart">
+      ♡
+    </div>
+
+    <p class="eyebrow">
+      Nossa família está crescendo
+    </p>
+
+    <h1 class="reveal-title">
+      É uma menina!
+    </h1>
+
+    <p class="reveal-subtitle">
+      Nossa Isabel está chegando. 💗
+    </p>
+
+    <div class="divider"></div>
+
+    <p
+      id="finalMessage"
+      class="personal-message"
+    ></p>
+
+
+    <!--
+      OPCIONAL:
+
+      Coloque um arquivo chamado:
+
+      ultrassom.jpeg
+
+      na mesma pasta do index.html.
+
+      Se não existir, esta parte desaparece.
+    -->
+
+    <figure
+      id="ultrasoundWrapper"
+      class="ultrasound-wrapper"
+    >
+
+      <img
+        id="ultrasound"
+        src="ultrassom.jpeg"
+        alt="Ultrassom da nossa bebê"
+      >
+
+      <figcaption class="photo-caption">
+        Nossa pequena 💗
+      </figcaption>
+
+    </figure>
+
+  </section>
+
+</main>
+
+
+<script>
+  /* ========================================================
+     CONFIGURAÇÃO DO SUPABASE
+     ======================================================== */
+
+  const SUPABASE_URL =
+    "https://tgjvnqfciookowvdrffk.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_W-x5gG4d6nYPCHWhcaqEzQ_--8Wql-1";
+
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+  /* ========================================================
+     ESTADO DA EXPERIÊNCIA
+     ======================================================== */
+
+  const state = {
+    name: "",
+    guess: null,
+    saved: false
+  };
+
+
+  /* ========================================================
+     ELEMENTOS
+     ======================================================== */
+
+  const screens =
+    document.querySelectorAll(".screen");
+
+  const startButton =
+    document.querySelector("#startButton");
+
+  const nameInput =
+    document.querySelector("#nameInput");
+
+  const nameButton =
+    document.querySelector("#nameButton");
+
+  const nameError =
+    document.querySelector("#nameError");
+
+  const guessName =
+    document.querySelector("#guessName");
+
+  const guessButtons =
+    document.querySelectorAll(".guess-button");
+
+  const loadingText =
+    document.querySelector("#loadingText");
+
+  const guessResult =
+    document.querySelector("#guessResult");
+
+  const databaseWarning =
+    document.querySelector("#databaseWarning");
+
+  const envelopeButton =
+    document.querySelector("#envelopeButton");
+
+  const finalMessage =
+    document.querySelector("#finalMessage");
+
+  const ultrasound =
+    document.querySelector("#ultrasound");
+
+  const ultrasoundWrapper =
+    document.querySelector("#ultrasoundWrapper");
+
+
+  /* ========================================================
+     TROCA DE TELA
+     ======================================================== */
+
+  function showScreen(id) {
+
+    screens.forEach(screen => {
+      screen.classList.remove("active");
+    });
+
+    const nextScreen =
+      document.querySelector(`#${id}`);
+
+    nextScreen.classList.add("active");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+
+  /* ========================================================
+     TELA INICIAL
+     ======================================================== */
+
+  startButton.addEventListener("click", () => {
+
+    showScreen("screenName");
+
+    setTimeout(() => {
+      nameInput.focus();
+    }, 100);
+
+  });
+
+
+  /* ========================================================
+     NOME
+     ======================================================== */
+
+  function continueFromName() {
+
+    const name =
+      nameInput.value.trim();
+
+    if (!name) {
+
+      nameError.textContent =
+        "Digite seu nome para continuar.";
+
+      nameInput.focus();
+
+      return;
+    }
+
+    state.name = name;
+
+    nameError.textContent = "";
+
+    guessName.textContent =
+      getFirstName(name);
+
+    showScreen("screenGuess");
+  }
+
+
+  nameButton.addEventListener(
+    "click",
+    continueFromName
+  );
+
+
+  nameInput.addEventListener(
+    "keydown",
+    event => {
+
+      if (event.key === "Enter") {
+        continueFromName();
+      }
+
+    }
+  );
+
+
+  /* ========================================================
+     PALPITE
+     ======================================================== */
+
+  guessButtons.forEach(button => {
+
+    button.addEventListener(
+      "click",
+      async () => {
+
+        const selectedGuess =
+          button.dataset.guess;
+
+        state.guess =
+          selectedGuess;
+
+        await registerGuess();
+
+      }
+    );
+
+  });
+
+
+  async function registerGuess() {
+
+    setGuessButtonsDisabled(true);
+
+    loadingText.classList.add("visible");
+
+    databaseWarning.classList.remove("visible");
+
+
+    try {
+
+      const { error } =
+        await supabaseClient
+          .from("guesses")
+          .insert({
+            name: state.name,
+            guess: state.guess
+          });
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      state.saved = true;
+
+      console.log(
+        "Palpite registrado com sucesso."
+      );
+
+    }
+    catch (error) {
+
+      state.saved = false;
+
+      console.error(
+        "Erro ao registrar palpite:",
+        error
+      );
+
+    }
+
+
+    loadingText.classList.remove("visible");
+
+    prepareEnvelopeScreen();
+
+    showScreen("screenEnvelope");
+  }
+
+
+  function setGuessButtonsDisabled(disabled) {
+
+    guessButtons.forEach(button => {
+      button.disabled = disabled;
+    });
+
+  }
+
+
+  /* ========================================================
+     TELA DO ENVELOPE
+     ======================================================== */
+
+  function prepareEnvelopeScreen() {
+
+    const firstName =
+      escapeText(
+        getFirstName(state.name)
+      );
+
+
+    if (state.guess === "girl") {
+
+      guessResult.innerHTML =
+        `${firstName}, então você acha que vem
+         <strong>uma menininha</strong> por aí... 💗`;
+
+    }
+    else {
+
+      guessResult.innerHTML =
+        `${firstName}, então você acha que vem
+         <strong>um menininho</strong> por aí... 💙`;
+
+    }
+
+
+    if (!state.saved) {
+
+      databaseWarning
+        .classList
+        .add("visible");
+
+    }
+
+  }
+
+
+  /* ========================================================
+     ABRIR ENVELOPE
+     ======================================================== */
+
+  envelopeButton.addEventListener(
+    "click",
+    () => {
+
+      envelopeButton.disabled = true;
+
+      envelopeButton
+        .classList
+        .add("open");
+
+
+      setTimeout(() => {
+
+        prepareRevealScreen();
+
+        document.body
+          .classList
+          .add("revealed");
+
+        showScreen("screenReveal");
+
+        createConfetti();
+
+      }, 1500);
+
+    }
+  );
+
+
+  /* ========================================================
+     REVELAÇÃO
+     ======================================================== */
+
+  function prepareRevealScreen() {
+
+    const firstName =
+      escapeText(
+        getFirstName(state.name)
+      );
+
+
+    if (state.guess === "girl") {
+
+      finalMessage.innerHTML =
+        `${firstName}, seu palpite estava certinho! 💗
+         Estamos muito felizes em dividir
+         esse momento com você.`;
+
+    }
+    else {
+
+      finalMessage.innerHTML =
+        `${firstName}, agora você já sabe:
+         vem uma menininha por aí! 💗
+         Estamos muito felizes em dividir
+         esse momento com você.`;
+
+    }
+
+  }
+
+
+  /* ========================================================
+     ULTRASSOM
+     ======================================================== */
+
+  ultrasound.addEventListener(
+    "error",
+    () => {
+
+      ultrasoundWrapper
+        .classList
+        .add("hidden");
+
+    }
+  );
+
+
+  /* ========================================================
+     UTILITÁRIOS
+     ======================================================== */
+
+  function getFirstName(fullName) {
+
+    return fullName
+      .trim()
+      .split(/\s+/)[0];
+
+  }
+
+
+  function escapeText(text) {
+
+    const element =
+      document.createElement("div");
+
+    element.textContent = text;
+
+    return element.innerHTML;
+
+  }
+
+
+  /* ========================================================
+     CONFETES
+     ======================================================== */
+
+  function createConfetti() {
+
+    const colors = [
+      "#e99aae",
+      "#f7c6d2",
+      "#ffffff",
+      "#d989a1",
+      "#f2b6c5"
+    ];
+
+
+    for (
+      let i = 0;
+      i < 55;
+      i++
+    ) {
+
+      const piece =
+        document.createElement("div");
+
+      piece.classList.add("confetti");
+
+
+      piece.style.left =
+        `${Math.random() * 100}vw`;
+
+
+      piece.style.background =
+        colors[
+          Math.floor(
+            Math.random()
+            * colors.length
+          )
+        ];
+
+
+      piece.style.animationDuration =
+        `${2.8 + Math.random() * 2.5}s`;
+
+      piece.style.animationDelay =
+        `${Math.random() * .8}s`;
+
+
+      document.body.appendChild(piece);
+
+
+      setTimeout(() => {
+        piece.remove();
+      }, 6500);
+
+    }
+
+  }
+</script>
+
+</body>
+</html>
